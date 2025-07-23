@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where, writeBatch } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { School, Student } from '../../../types';
 import { GRADES, getGradesForSchoolTypes } from '../../../utils/constants';
@@ -11,6 +11,7 @@ export default function StudentsPage() {
   const [schools, setSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showBulkAddForm, setShowBulkAddForm] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
   const [formData, setFormData] = useState({
@@ -20,6 +21,13 @@ export default function StudentsPage() {
     classSection: '',
     totalFee: 0,
     startDate: ''
+  });
+  const [bulkFormData, setBulkFormData] = useState({
+    schoolId: '',
+    grade: '',
+    classSection: '',
+    startDate: new Date().toISOString().split('T')[0],
+    students: [{ fullName: '', totalFee: 0 }]
   });
 
   const classSections = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح', 'ط', 'ي'];
@@ -89,6 +97,43 @@ export default function StudentsPage() {
     }
   };
 
+  const handleBulkSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { schoolId, grade, classSection, startDate, students } = bulkFormData;
+
+    if (!schoolId || !grade || !classSection || !startDate) {
+      alert('يرجى ملء جميع الحقول الرئيسية');
+      return;
+    }
+
+    const batch = writeBatch(db);
+    students.forEach(student => {
+      if (student.fullName && student.totalFee > 0) {
+        const studentRef = doc(collection(db, 'students'));
+        batch.set(studentRef, {
+          ...student,
+          schoolId,
+          grade,
+          classSection,
+          startDate: new Date(startDate),
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+    });
+
+    try {
+      await batch.commit();
+      resetBulkForm();
+      fetchData();
+      alert('تمت إضافة الطلاب بنجاح');
+    } catch (error) {
+      console.error('Error saving students in bulk:', error);
+      alert('حدث خطأ أثناء حفظ الطلاب');
+    }
+  };
+
   const handleDelete = async (studentId: string) => {
     if (confirm('هل أنت متأكد من حذف هذا الطالب؟')) {
       try {
@@ -131,6 +176,17 @@ export default function StudentsPage() {
     setShowAddForm(false);
   };
 
+  const resetBulkForm = () => {
+    setBulkFormData({
+      schoolId: '',
+      grade: '',
+      classSection: '',
+      startDate: new Date().toISOString().split('T')[0],
+      students: [{ fullName: '', totalFee: 0 }]
+    });
+    setShowBulkAddForm(false);
+  };
+
   const handleSchoolChange = (schoolId: string) => {
     const school = schools.find(s => s.id === schoolId);
     setSelectedSchool(school || null);
@@ -140,6 +196,36 @@ export default function StudentsPage() {
       grade: '', // Reset grade when school changes
       classSection: ''
     }));
+  };
+
+  const handleBulkSchoolChange = (schoolId: string) => {
+    const school = schools.find(s => s.id === schoolId);
+    setSelectedSchool(school || null);
+    setBulkFormData(prev => ({
+      ...prev,
+      schoolId,
+      grade: '',
+      classSection: ''
+    }));
+  };
+
+  const handleBulkStudentChange = (index: number, field: string, value: string | number) => {
+    const newStudents = [...bulkFormData.students];
+    newStudents[index] = { ...newStudents[index], [field]: value };
+    setBulkFormData(prev => ({ ...prev, students: newStudents }));
+  };
+
+  const addBulkStudentRow = () => {
+    setBulkFormData(prev => ({
+      ...prev,
+      students: [...prev.students, { fullName: '', totalFee: 0 }]
+    }));
+  };
+
+  const removeBulkStudentRow = (index: number) => {
+    const newStudents = [...bulkFormData.students];
+    newStudents.splice(index, 1);
+    setBulkFormData(prev => ({ ...prev, students: newStudents }));
   };
 
   const getSchoolName = (schoolId: string) => {
@@ -172,29 +258,148 @@ export default function StudentsPage() {
             إضافة مدرسة أولاً
           </Link>
         ) : (
-          <button
-            onClick={() => {
-              resetForm(); // Reset the form and set the date
-              setShowAddForm(true);
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            + إضافة طالب جديد
-          </button>
+          <div className="flex space-x-2 space-x-reverse">
+            <button
+              onClick={() => {
+                resetForm();
+                setShowAddForm(true);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              + إضافة طالب جديد
+            </button>
+            <button
+              onClick={() => setShowBulkAddForm(true)}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              + إضافة مجموعة طلاب
+            </button>
+          </div>
         )}
       </div>
 
-      {schools.length === 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-          <div className="text-yellow-400 text-6xl mb-4">⚠️</div>
-          <h3 className="text-lg font-medium text-yellow-800 mb-2">لا توجد مدارس مسجلة</h3>
-          <p className="text-yellow-700 mb-4">يجب إضافة مدرسة واحدة على الأقل قبل إضافة الطلاب</p>
-          <Link
-            href="/dashboard/schools"
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors inline-block"
-          >
-            انتقل إلى إدارة المدارس
-          </Link>
+      {/* Bulk Add Form */}
+      {showBulkAddForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">إضافة مجموعة طلاب</h2>
+            <form onSubmit={handleBulkSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">المدرسة *</label>
+                  <select
+                    value={bulkFormData.schoolId}
+                    onChange={(e) => handleBulkSchoolChange(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">اختر المدرسة</option>
+                    {schools.map((school) => (
+                      <option key={school.id} value={school.id}>{school.nameArabic}</option>
+                    ))}
+                  </select>
+                </div>
+                {selectedSchool && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">الصف الدراسي *</label>
+                      <select
+                        value={bulkFormData.grade}
+                        onChange={(e) => setBulkFormData(prev => ({ ...prev, grade: e.target.value }))}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">اختر الصف</option>
+                        {getGradesForSchoolTypes(selectedSchool.types).map((grade) => (
+                          <option key={grade.value} value={grade.value}>{grade.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">الشعبة *</label>
+                      <select
+                        value={bulkFormData.classSection}
+                        onChange={(e) => setBulkFormData(prev => ({ ...prev, classSection: e.target.value }))}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">اختر الشعبة</option>
+                        {classSections.map((section) => (
+                          <option key={section} value={section}>{section}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">تاريخ المباشرة *</label>
+                  <input
+                    type="date"
+                    value={bulkFormData.startDate}
+                    onChange={(e) => setBulkFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <hr className="my-4" />
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-800 mb-2">قائمة الطلاب</h3>
+                <div className="space-y-2">
+                  {bulkFormData.students.map((student, index) => (
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                      <input
+                        type="text"
+                        placeholder="اسم الطالب الكامل"
+                        value={student.fullName}
+                        onChange={(e) => handleBulkStudentChange(index, 'fullName', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                      <input
+                        type="number"
+                        placeholder="القسط الكلي"
+                        value={student.totalFee}
+                        onChange={(e) => handleBulkStudentChange(index, 'totalFee', Number(e.target.value))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeBulkStudentRow(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        حذف
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={addBulkStudentRow}
+                  className="mt-2 text-blue-600 hover:text-blue-800"
+                >
+                  + إضافة طالب آخر
+                </button>
+              </div>
+
+              <div className="flex justify-end space-x-3 space-x-reverse pt-4">
+                <button
+                  type="button"
+                  onClick={resetBulkForm}
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  إلغاء
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                >
+                  حفظ المجموعة
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
@@ -234,8 +439,7 @@ export default function StudentsPage() {
                     <option key={school.id} value={school.id}>
                       {school.nameArabic}
                     </option>
-                  ))}
-                </select>
+                  ))}</select>
               </div>
 
               {selectedSchool && (
@@ -255,8 +459,7 @@ export default function StudentsPage() {
                         <option key={grade.value} value={grade.value}>
                           {grade.label}
                         </option>
-                      ))}
-                    </select>
+                      ))}</select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -273,8 +476,7 @@ export default function StudentsPage() {
                         <option key={section} value={section}>
                           {section}
                         </option>
-                      ))}
-                    </select>
+                      ))}</select>
                   </div>
                 </div>
               )}
