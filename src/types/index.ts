@@ -21,6 +21,7 @@ export interface Student {
   fullName: string;
   schoolId: string;
   grade: string;
+  classSection: string; // Add classSection property
   totalFee: number;
   startDate: Date;
   createdAt?: Date;

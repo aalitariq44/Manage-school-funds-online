@@ -17,9 +17,12 @@ export default function StudentsPage() {
     fullName: '',
     schoolId: '',
     grade: '',
+    classSection: '',
     totalFee: 0,
     startDate: ''
   });
+
+  const classSections = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح', 'ط', 'ي'];
 
   useEffect(() => {
     fetchData();
@@ -107,6 +110,7 @@ export default function StudentsPage() {
       fullName: student.fullName,
       schoolId: student.schoolId,
       grade: student.grade,
+      classSection: student.classSection || '',
       totalFee: student.totalFee,
       startDate: student.startDate instanceof Date ? student.startDate.toISOString().split('T')[0] : student.startDate
     });
@@ -118,6 +122,7 @@ export default function StudentsPage() {
       fullName: '',
       schoolId: '',
       grade: '',
+      classSection: '',
       totalFee: 0,
       startDate: new Date().toISOString().split('T')[0] // Set current date
     });
@@ -132,7 +137,8 @@ export default function StudentsPage() {
     setFormData(prev => ({
       ...prev,
       schoolId,
-      grade: '' // Reset grade when school changes
+      grade: '', // Reset grade when school changes
+      classSection: ''
     }));
   };
 
@@ -235,23 +241,43 @@ export default function StudentsPage() {
               </div>
 
               {selectedSchool && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    الصف الدراسي *
-                  </label>
-                  <select
-                    value={formData.grade}
-                    onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value }))}
-                    required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">اختر الصف</option>
-                    {getGradesForSchoolTypes(selectedSchool.types).map((grade) => (
-                      <option key={grade.value} value={grade.value}>
-                        {grade.label}
-                      </option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الصف الدراسي *
+                    </label>
+                    <select
+                      value={formData.grade}
+                      onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value }))}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">اختر الصف</option>
+                      {getGradesForSchoolTypes(selectedSchool.types).map((grade) => (
+                        <option key={grade.value} value={grade.value}>
+                          {grade.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      الشعبة *
+                    </label>
+                    <select
+                      value={formData.classSection}
+                      onChange={(e) => setFormData(prev => ({ ...prev, classSection: e.target.value }))}
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">اختر الشعبة</option>
+                      {classSections.map((section) => (
+                        <option key={section} value={section}>
+                          {section}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               )}
 
@@ -313,7 +339,10 @@ export default function StudentsPage() {
             <p className="text-gray-500 mb-4">ابدأ بإضافة طالب جديد للنظام</p>
             {schools.length > 0 && (
               <button
-                onClick={() => setShowAddForm(true)}
+                onClick={() => {
+                  resetForm();
+                  setShowAddForm(true);
+                }}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
               >
                 إضافة طالب جديد
@@ -333,6 +362,9 @@ export default function StudentsPage() {
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     الصف
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    الشعبة
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     القسط الكلي
@@ -358,6 +390,9 @@ export default function StudentsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {school ? getGradeLabel(student.grade) : student.grade}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {student.classSection}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {(student.totalFee ?? 0).toLocaleString()} د.ع
