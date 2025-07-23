@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { School, Student } from '../../../types';
-import { getGradesForSchoolTypes } from '../../../utils/constants';
+import { GRADES, getGradesForSchoolTypes } from '../../../utils/constants';
 import Link from 'next/link';
 
 export default function StudentsPage() {
@@ -148,9 +148,7 @@ export default function StudentsPage() {
   };
 
   const getGradeLabel = (gradeValue: string) => {
-    if (!selectedSchool) return gradeValue;
-    const availableGrades = getGradesForSchoolTypes(selectedSchool.types);
-    const grade = availableGrades.find(g => g.value === gradeValue);
+    const grade = GRADES.find(g => g.value === gradeValue);
     return grade?.label || gradeValue;
   };
 
