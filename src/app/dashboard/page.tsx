@@ -1,11 +1,33 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import { db } from '../../lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const [schoolCount, setSchoolCount] = useState(0);
+  const [studentCount, setStudentCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const schoolsCollection = collection(db, 'schools');
+        const schoolsSnapshot = await getDocs(schoolsCollection);
+        setSchoolCount(schoolsSnapshot.size);
+
+        const studentsCollection = collection(db, 'students');
+        const studentsSnapshot = await getDocs(studentsCollection);
+        setStudentCount(studentsSnapshot.size);
+      } catch (error) {
+        console.error("Error fetching counts: ", error);
+      }
+    };
+
+    fetchCounts();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -20,7 +42,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-blue-600 text-sm font-medium">إجمالي المدارس</p>
-                <p className="text-2xl font-bold text-blue-800">0</p>
+                <p className="text-2xl font-bold text-blue-800">{schoolCount}</p>
               </div>
               <div className="text-blue-500 text-3xl">🏫</div>
             </div>
@@ -30,7 +52,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-green-600 text-sm font-medium">إجمالي الطلاب</p>
-                <p className="text-2xl font-bold text-green-800">0</p>
+                <p className="text-2xl font-bold text-green-800">{studentCount}</p>
               </div>
               <div className="text-green-500 text-3xl">👨‍🎓</div>
             </div>
