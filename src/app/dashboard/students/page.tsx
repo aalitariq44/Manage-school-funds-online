@@ -23,6 +23,7 @@ export default function StudentsPage() {
 
   useEffect(() => {
     fetchData();
+    setFormData(prev => ({ ...prev, startDate: new Date().toISOString().split('T')[0] }));
   }, []);
 
   const fetchData = async () => {
@@ -107,7 +108,7 @@ export default function StudentsPage() {
       schoolId: student.schoolId,
       grade: student.grade,
       totalFee: student.totalFee,
-      startDate: student.startDate.toISOString().split('T')[0]
+      startDate: student.startDate instanceof Date ? student.startDate.toISOString().split('T')[0] : student.startDate
     });
     setShowAddForm(true);
   };
@@ -118,7 +119,7 @@ export default function StudentsPage() {
       schoolId: '',
       grade: '',
       totalFee: 0,
-      startDate: ''
+      startDate: new Date().toISOString().split('T')[0] // Set current date
     });
     setEditingStudent(null);
     setSelectedSchool(null);
@@ -168,7 +169,10 @@ export default function StudentsPage() {
           </Link>
         ) : (
           <button
-            onClick={() => setShowAddForm(true)}
+            onClick={() => {
+              resetForm(); // Reset the form and set the date
+              setShowAddForm(true);
+            }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
           >
             + إضافة طالب جديد
