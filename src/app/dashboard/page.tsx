@@ -38,7 +38,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-yellow-600 text-sm font-medium">الأقساط المحصلة</p>
-                <p className="text-2xl font-bold text-yellow-800">0 ر.س</p>
+                <p className="text-2xl font-bold text-yellow-800">0 د.ع</p>
               </div>
               <div className="text-yellow-500 text-3xl">💰</div>
             </div>
@@ -48,7 +48,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-purple-600 text-sm font-medium">الأقساط المتبقية</p>
-                <p className="text-2xl font-bold text-purple-800">0 ر.س</p>
+                <p className="text-2xl font-bold text-purple-800">0 د.ع</p>
               </div>
               <div className="text-purple-500 text-3xl">📊</div>
             </div>

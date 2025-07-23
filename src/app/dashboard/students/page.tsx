@@ -254,7 +254,7 @@ export default function StudentsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    القسط الكلي للعام الدراسي (ر.س) *
+                    القسط الكلي للعام الدراسي (د.ع) *
                   </label>
                   <input
                     type="number"
@@ -356,7 +356,7 @@ export default function StudentsPage() {
                         {school ? getGradeLabel(student.grade) : student.grade}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {student.totalFee.toLocaleString()} ر.س
+                        {student.totalFee.toLocaleString()} د.ع
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {student.startDate.toLocaleDateString('ar-SA')}
