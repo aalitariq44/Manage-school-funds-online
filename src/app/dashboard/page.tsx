@@ -1,9 +1,11 @@
 "use client";
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const router = useRouter();
 
   return (
     <div className="space-y-6">
@@ -69,13 +71,13 @@ export default function DashboardPage() {
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">الإجراءات السريعة</h2>
           <div className="space-y-3">
-            <button className="w-full text-right p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200">
+            <button type="button" onClick={() => router.push('/dashboard/schools')} className="w-full text-right p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200">
               <span className="text-blue-700 font-medium">إضافة مدرسة جديدة</span>
             </button>
-            <button className="w-full text-right p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors border border-green-200">
+            <button type="button" onClick={() => router.push('/dashboard/students')} className="w-full text-right p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors border border-green-200">
               <span className="text-green-700 font-medium">إضافة طالب جديد</span>
             </button>
-            <button className="w-full text-right p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors border border-purple-200">
+            <button type="button" onClick={() => router.push('/dashboard/reports')} className="w-full text-right p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors border border-purple-200">
               <span className="text-purple-700 font-medium">عرض التقارير</span>
             </button>
           </div>

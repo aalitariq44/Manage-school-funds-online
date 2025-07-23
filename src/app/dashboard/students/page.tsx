@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from 'firebase/firestore';
-import { db } from '../../../../lib/firebase';
-import { School, Student } from '../../../../types';
-import { getGradesForSchoolTypes } from '../../../../utils/constants';
+import { db } from '../../../lib/firebase';
+import { School, Student } from '../../../types';
+import { getGradesForSchoolTypes } from '../../../utils/constants';
 import Link from 'next/link';
 
 export default function StudentsPage() {
@@ -356,7 +356,7 @@ export default function StudentsPage() {
                         {school ? getGradeLabel(student.grade) : student.grade}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {student.totalFee.toLocaleString()} د.ع
+                        {(student.totalFee ?? 0).toLocaleString()} د.ع
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {student.startDate.toLocaleDateString('ar-SA')}

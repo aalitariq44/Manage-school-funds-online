@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../../../lib/firebase';
-import { School, SchoolType } from '../../../../types';
-import { SCHOOL_TYPE_LABELS } from '../../../../utils/constants';
+import { db } from '../../../lib/firebase';
+import { School, SchoolType } from '../../../types';
+import { SCHOOL_TYPE_LABELS } from '../../../utils/constants';
 
 export default function SchoolsPage() {
   const [schools, setSchools] = useState<School[]>([]);
