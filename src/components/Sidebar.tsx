@@ -13,6 +13,7 @@ const sidebarItems: SidebarItem[] = [
   { href: '/dashboard', icon: '🏠', label: 'الرئيسية' },
   { href: '/dashboard/schools', icon: '🏫', label: 'المدارس' },
   { href: '/dashboard/students', icon: '👨‍🎓', label: 'الطلاب' },
+  { href: '/dashboard/installments', icon: '💰', label: 'الاقساط' },
   { href: '/dashboard/reports', icon: '📊', label: 'التقارير' },
 ];
 
