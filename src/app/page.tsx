@@ -1,46 +1,32 @@
 "use client";
-import React, { useState } from 'react';
-import { db } from '../lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function HomePage() {
-  const [studentName, setStudentName] = useState('');
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-  const addStudent = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (studentName.trim() === '') {
-      alert('يرجى إدخال اسم الطالب');
-      return;
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.push('/dashboard');
+      } else {
+        router.push('/login');
+      }
     }
+  }, [user, loading, router]);
 
-    try {
-      const docRef = await addDoc(collection(db, 'students'), {
-        name: studentName,
-      });
-      console.log('Document written with ID: ', docRef.id);
-      setStudentName('');
-      alert('تمت إضافة الطالب بنجاح');
-    } catch (error) {
-      console.error('Error adding document: ', error);
-      alert('حدث خطأ أثناء إضافة الطالب');
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
 
-  return (
-    <main style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
-      <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>إضافة طالب جديد</h1>
-      <form onSubmit={addStudent} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <input
-          type="text"
-          value={studentName}
-          onChange={(e) => setStudentName(e.target.value)}
-          placeholder="اسم الطالب"
-          style={{ padding: '0.5rem', fontSize: '1rem', marginBottom: '1rem', width: '300px' }}
-        />
-        <button type="submit" style={{ padding: '0.5rem 1rem', fontSize: '1rem', cursor: 'pointer' }}>
-          إضافة طالب
-        </button>
-      </form>
-    </main>
-  );
+  return null;
 }

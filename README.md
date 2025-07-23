@@ -1,37 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# نظام إدارة أموال المدارس الأهلية
 
-## Getting Started
+تطبيق ويب شامل لإدارة أموال المدارس الأهلية باستخدام Next.js و Firebase.
 
-First, run the development server:
+## المميزات
 
+### 🔐 نظام المصادقة
+- تسجيل دخول آمن باستخدام Firebase Authentication
+- حماية الصفحات والمسارات
+- إدارة جلسات المستخدمين
+
+### 🏫 إدارة المدارس
+- إضافة وتعديل وحذف المدارس
+- تصنيف المدارس (ابتدائي، متوسط، إعدادي)
+- حفظ معلومات شاملة لكل مدرسة:
+  - الاسم بالعربية والإنجليزية
+  - نوع المدرسة
+  - العنوان
+  - رقم الهاتف
+  - اسم المدير
+
+### 👨‍🎓 إدارة الطلاب
+- إضافة وتعديل وحذف الطلاب
+- ربط الطلاب بالمدارس
+- اختيار الصف الدراسي حسب نوع المدرسة:
+  - ابتدائي: الصف الأول إلى السادس
+  - متوسط: الصف الأول إلى الثالث متوسط
+  - إعدادي: الصف الرابع، الخامس، السادس (علمي/أدبي)
+- تسجيل القسط الكلي وتاريخ المباشرة
+
+### 📊 واجهة مستخدم متطورة
+- تصميم متجاوب يعمل على جميع الأجهزة
+- دعم كامل للغة العربية مع اتجاه RTL
+- ألوان متناسقة وتصميم حديث
+- رسائل تأكيد وتنبيهات واضحة
+
+### 🗄️ قاعدة البيانات
+- Firebase Firestore لتخزين البيانات
+- علاقات محددة بين المدارس والطلاب
+- تحديث فوري للبيانات
+
+## التقنيات المستخدمة
+
+- **Frontend**: Next.js 15.4.3 مع TypeScript
+- **UI**: Tailwind CSS للتصميم
+- **Backend**: Firebase (Authentication + Firestore)
+- **State Management**: React Hooks و Context API
+- **التوجيه**: Next.js App Router
+
+## بدء الاستخدام
+
+### 1. تثبيت التبعيات
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. إعداد Firebase
+1. إنشاء مشروع جديد في [Firebase Console](https://console.firebase.google.com)
+2. تفعيل Authentication و Firestore
+3. إنشاء تطبيق ويب والحصول على إعدادات التكوين
+4. نسخ ملف `.env.local.example` إلى `.env.local`
+5. ملء قيم متغيرات البيئة من Firebase
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. تشغيل المشروع
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. إنشاء مستخدم أول
+- الذهاب إلى Firebase Console > Authentication
+- إضافة مستخدم جديد بالبريد الإلكتروني وكلمة المرور
 
-## Learn More
+## هيكل المشروع
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # صفحات التطبيق
+│   ├── dashboard/         # لوحة التحكم
+│   │   ├── schools/       # إدارة المدارس
+│   │   ├── students/      # إدارة الطلاب
+│   │   └── reports/       # التقارير
+│   ├── login/             # صفحة تسجيل الدخول
+│   └── globals.css        # التصميم العام
+├── components/            # المكونات المشتركة
+├── contexts/              # Context للحالة العامة
+├── lib/                   # إعدادات Firebase
+├── types/                 # تعريفات TypeScript
+└── utils/                 # الوظائف المساعدة
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## الاستخدام
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### إدارة المدارس
+1. الانتقال إلى قسم "المدارس"
+2. النقر على "إضافة مدرسة جديدة"
+3. ملء جميع البيانات المطلوبة
+4. حفظ المدرسة
 
-## Deploy on Vercel
+### إدارة الطلاب
+1. التأكد من وجود مدرسة واحدة على الأقل
+2. الانتقال إلى قسم "الطلاب"
+3. النقر على "إضافة طالب جديد"
+4. اختيار المدرسة أولاً
+5. ملء بيانات الطالب مع اختيار الصف المناسب
+6. حفظ الطالب
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## المميزات المستقبلية
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [ ] نظام إدارة الأقساط والدفعات
+- [ ] تقارير مالية تفصيلية
+- [ ] إشعارات الدفع
+- [ ] تصدير البيانات (Excel/PDF)
+- [ ] لوحة تحكم إحصائية متقدمة
+- [ ] نظام النسخ الاحتياطي
+
+## الأمان
+
+- جميع المسارات محمية بنظام المصادقة
+- قواعد أمان Firebase Firestore
+- التحقق من صحة البيانات في الواجهة والخادم
+- حماية من هجمات XSS و CSRF
 "# Manage-school-funds-online" 
