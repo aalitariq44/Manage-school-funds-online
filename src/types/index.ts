@@ -38,6 +38,28 @@ export interface Installment {
   notes?: string;
 }
 
+export enum AdditionalFeeType {
+  REGISTRATION = 'registration',
+  UNIFORM = 'uniform',
+  BOOKS = 'books',
+  CUSTOM = 'custom'
+}
+
+export interface AdditionalFee {
+  id?: string;
+  feeNumber: number; // رقم متسلسل فريد للرسم
+  studentId: string;
+  studentName: string;
+  schoolId: string;
+  type: AdditionalFeeType;
+  customTypeName?: string; // للرسوم المخصصة
+  amount: number;
+  isPaid: boolean;
+  paidDate?: Date;
+  createdAt: Date;
+  notes?: string;
+}
+
 export interface Grade {
   value: string;
   label: string;

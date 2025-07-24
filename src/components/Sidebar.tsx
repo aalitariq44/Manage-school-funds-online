@@ -14,6 +14,7 @@ const sidebarItems: SidebarItem[] = [
   { href: '/dashboard/schools', icon: '🏫', label: 'المدارس' },
   { href: '/dashboard/students', icon: '👨‍🎓', label: 'الطلاب' },
   { href: '/dashboard/installments', icon: '💰', label: 'الاقساط' },
+  { href: '/dashboard/additional-fees', icon: '💳', label: 'الرسوم الإضافية' },
   { href: '/dashboard/reports', icon: '📊', label: 'التقارير' },
 ];
 

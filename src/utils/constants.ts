@@ -1,9 +1,16 @@
-import { SchoolType, Grade } from '../types';
+import { SchoolType, Grade, AdditionalFeeType } from '../types';
 
 export const SCHOOL_TYPE_LABELS = {
   [SchoolType.ELEMENTARY]: 'ابتدائي',
   [SchoolType.MIDDLE]: 'متوسط',
   [SchoolType.HIGH]: 'إعدادي'
+};
+
+export const ADDITIONAL_FEE_TYPE_LABELS = {
+  [AdditionalFeeType.REGISTRATION]: 'رسوم التسجيل',
+  [AdditionalFeeType.UNIFORM]: 'الزي المدرسي',
+  [AdditionalFeeType.BOOKS]: 'الكتب',
+  [AdditionalFeeType.CUSTOM]: 'رسوم مخصصة'
 };
 
 export const GRADES: Grade[] = [
