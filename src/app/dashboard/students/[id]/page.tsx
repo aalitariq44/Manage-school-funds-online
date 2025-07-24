@@ -199,35 +199,35 @@ export default function StudentDetailsPage() {
     }
 
     try {
-      const newFee: Omit<AdditionalFee, 'id'> = {
+      const newFee: any = {
         feeNumber: nextFeeNumber,
         studentId: studentId,
         studentName: student.fullName,
         schoolId: student.schoolId,
         type: newFeeType,
-        customTypeName: newFeeType === AdditionalFeeType.CUSTOM ? customTypeName : undefined,
         amount: amount,
         isPaid: newFeePaid,
-        paidDate: newFeePaid ? new Date() : undefined,
         createdAt: new Date(),
         notes: ''
       };
+      if (newFeeType === AdditionalFeeType.CUSTOM && customTypeName.trim()) {
+        newFee.customTypeName = customTypeName;
+      }
+      if (newFeePaid) {
+        newFee.paidDate = new Date();
+      }
 
       await addDoc(collection(db, 'additionalFees'), newFee);
-      
       // Update next fee number
       setNextFeeNumber(prev => prev + 1);
-      
       // Refresh additional fees
       await fetchAdditionalFees();
-      
       // Reset form
       setNewFeeAmount('');
       setNewFeePaid(false);
       setCustomTypeName('');
       setNewFeeType(AdditionalFeeType.REGISTRATION);
       setShowAddFee(false);
-      
       alert('تم إضافة الرسم الإضافي بنجاح');
     } catch (error) {
       console.error('Error adding additional fee:', error);
