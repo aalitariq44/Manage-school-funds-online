@@ -649,7 +649,7 @@ export default function StudentsPage() {
                         {student.classSection}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {(student.totalFee ?? 0).toLocaleString()} د.ع
+                        {(student.totalFee ?? 0).toLocaleString('en-US')} د.ع
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {student.startDate.toLocaleDateString('ar-SA')}

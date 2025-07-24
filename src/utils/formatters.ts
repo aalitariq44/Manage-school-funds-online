@@ -1,6 +1,6 @@
 // utils/formatters.ts
 export const formatCurrency = (amount: number): string => {
-  return `${amount.toLocaleString('ar-IQ')} د.ع`;
+  return `${amount.toLocaleString('en-US')} د.ع`;
 };
 
 export const formatDate = (date: Date): string => {
