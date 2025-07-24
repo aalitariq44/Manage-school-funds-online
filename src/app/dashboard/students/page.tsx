@@ -29,6 +29,7 @@ export default function StudentsPage() {
     startDate: new Date().toISOString().split('T')[0],
     students: [{ fullName: '', totalFee: 0 }]
   });
+  const [searchQuery, setSearchQuery] = useState(''); // حالة لتخزين النص المدخل في حقل البحث
 
   const classSections = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح', 'ط', 'ي'];
 
@@ -238,6 +239,10 @@ export default function StudentsPage() {
     return grade?.label || gradeValue;
   };
 
+  const filteredStudents = students.filter(student =>
+    student.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -259,6 +264,13 @@ export default function StudentsPage() {
           </Link>
         ) : (
           <div className="flex space-x-2 space-x-reverse">
+            <input
+              type="text"
+              placeholder="ابحث عن طالب..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
             <button
               onClick={() => {
                 resetForm();
@@ -578,7 +590,7 @@ export default function StudentsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {students.map((student) => {
+                {filteredStudents.map((student) => {
                   const school = schools.find(s => s.id === student.schoolId);
                   return (
                     <tr key={student.id} className="hover:bg-gray-50">
