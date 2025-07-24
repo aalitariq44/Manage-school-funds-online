@@ -33,13 +33,31 @@ export default function StudentsPage() {
   const [filterSchoolId, setFilterSchoolId] = useState('');
   const [filterGrade, setFilterGrade] = useState('');
   const [filterSection, setFilterSection] = useState('');
+  // أسعار الأقساط الثابتة
+  const [fixedInstallmentPrices, setFixedInstallmentPrices] = useState<{ id: string; className: string; price: number }[]>([]);
 
   const classSections = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح', 'ط', 'ي'];
 
   useEffect(() => {
     fetchData();
+    fetchFixedInstallmentPrices();
     setFormData(prev => ({ ...prev, startDate: new Date().toISOString().split('T')[0] }));
   }, []);
+
+  // جلب أسعار الأقساط الثابتة
+  const fetchFixedInstallmentPrices = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'fixedInstallmentPrices'));
+      const pricesData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        className: doc.data().className,
+        price: doc.data().price,
+      }));
+      setFixedInstallmentPrices(pricesData);
+    } catch (error) {
+      console.error('Error fetching fixed installment prices:', error);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -198,7 +216,19 @@ export default function StudentsPage() {
       ...prev,
       schoolId,
       grade: '', // Reset grade when school changes
-      classSection: ''
+      classSection: '',
+      totalFee: 0 // Reset totalFee when school changes
+    }));
+  };
+
+  // عند تغيير الصف، إذا كان هناك سعر ثابت، يتم تعبئة القسط الكلي تلقائيًا
+  const handleGradeChange = (gradeValue: string) => {
+    // ابحث عن السعر الثابت لهذا الصف
+    const found = fixedInstallmentPrices.find(p => p.className === gradeValue);
+    setFormData(prev => ({
+      ...prev,
+      grade: gradeValue,
+      totalFee: found ? found.price : 0
     }));
   };
 
@@ -504,7 +534,7 @@ export default function StudentsPage() {
                     </label>
                     <select
                       value={formData.grade}
-                      onChange={(e) => setFormData(prev => ({ ...prev, grade: e.target.value }))}
+                      onChange={(e) => handleGradeChange(e.target.value)}
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
@@ -513,7 +543,8 @@ export default function StudentsPage() {
                         <option key={grade.value} value={grade.value}>
                           {grade.label}
                         </option>
-                      ))}</select>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -540,15 +571,23 @@ export default function StudentsPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     القسط الكلي للعام الدراسي (د.ع) *
                   </label>
-                  <input
-                    type="number"
-                    value={formData.totalFee}
-                    onChange={(e) => setFormData(prev => ({ ...prev, totalFee: Number(e.target.value) }))}
-                    required
-                    min="0"
-                    step="0.01"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={formData.totalFee}
+                      onChange={(e) => setFormData(prev => ({ ...prev, totalFee: Number(e.target.value) }))}
+                      required
+                      min="0"
+                      step="0.01"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {/* إذا كان هناك سعر ثابت لهذا الصف، أظهره كملاحظة */}
+                    {formData.grade && fixedInstallmentPrices.find(p => p.className === formData.grade) && (
+                      <div className="absolute left-0 top-full mt-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded shadow">
+                        السعر المقترح: {fixedInstallmentPrices.find(p => p.className === formData.grade)?.price.toLocaleString('en-US')} د.ع
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 <div>
