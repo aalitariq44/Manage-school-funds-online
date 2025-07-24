@@ -16,6 +16,11 @@ const sidebarItems: SidebarItem[] = [
   { href: '/dashboard/installments', icon: '💰', label: 'الاقساط' },
   { href: '/dashboard/additional-fees', icon: '💳', label: 'الرسوم الإضافية' },
   { href: '/dashboard/reports', icon: '📊', label: 'التقارير' },
+  { href: '/dashboard/external-incomes', icon: '💵', label: 'الواردات الخارجية' },
+  { href: '/dashboard/expenses', icon: '🧾', label: 'المصروفات' },
+  { href: '/dashboard/salaries', icon: '🧑‍💼', label: 'الرواتب' },
+  { href: '/dashboard/settings', icon: '⚙️', label: 'الإعدادات' },
+  { href: '/logout', icon: '🚪', label: 'تسجيل الخروج' },
 ];
 
 export default function Sidebar() {
