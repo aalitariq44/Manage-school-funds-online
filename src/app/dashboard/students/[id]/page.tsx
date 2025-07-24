@@ -5,6 +5,12 @@ import { doc, getDoc, collection, addDoc, getDocs, deleteDoc, query, where, orde
 import { db } from '../../../../lib/firebase';
 import { Student, School, Installment } from '../../../../types';
 import { formatCurrency, formatDate } from '../../../../utils/formatters';
+import { GRADES } from '../../../../utils/constants';
+  // دالة لجلب اسم الصف بالعربي
+  const getGradeLabel = (gradeValue: string) => {
+    const grade = GRADES.find(g => g.value === gradeValue);
+    return grade?.label || gradeValue;
+  };
 import LoadingSpinner from '../../../../components/LoadingSpinner';
 
 export default function StudentDetailsPage() {
@@ -239,7 +245,7 @@ export default function StudentDetailsPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">الصف</label>
-              <p className="text-lg text-gray-900">{student.grade}</p>
+              <p className="text-lg text-gray-900">{getGradeLabel(student.grade)}</p>
             </div>
           </div>
           <div className="space-y-3">
