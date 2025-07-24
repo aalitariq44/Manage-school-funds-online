@@ -25,6 +25,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [addingAccountant, setAddingAccountant] = useState(false);
   const [addingInstallmentPrice, setAddingInstallmentPrice] = useState(false);
+  const [installmentError, setInstallmentError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAccountants();
@@ -92,7 +93,15 @@ export default function SettingsPage() {
   };
 
   const handleAddFixedInstallmentPrice = async () => {
+    setInstallmentError(null);
     if (newClassName.trim() === '' || newClassPrice.trim() === '' || isNaN(parseFloat(newClassPrice))) return;
+
+    // تحقق إذا كان الصف موجود مسبقًا
+    const alreadyExists = fixedInstallmentPrices.some(item => item.className === newClassName);
+    if (alreadyExists) {
+      setInstallmentError('لا يمكن إضافة نفس الصف مرتين.');
+      return;
+    }
 
     try {
       setAddingInstallmentPrice(true);
@@ -203,6 +212,9 @@ export default function SettingsPage() {
             {addingInstallmentPrice ? 'جاري الإضافة...' : 'إضافة سعر'}
           </button>
         </div>
+        {installmentError && (
+          <div className="mb-2 text-red-600 text-sm">{installmentError}</div>
+        )}
 
         {fixedInstallmentPrices.length === 0 ? (
           <p className="text-gray-500">لا توجد أسعار أقساط ثابتة مضافة بعد.</p>
