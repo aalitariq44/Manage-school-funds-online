@@ -180,7 +180,7 @@ export default function ExpensesPage() {
           &lt;
         </button>
         <h2 className="text-xl font-bold text-gray-800">
-          {new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentMonth)}
+          {new Intl.DateTimeFormat('en-US', { month: '2-digit', year: 'numeric' }).format(currentMonth)}
         </h2>
         <button onClick={handleNextMonth} className="text-blue-600 hover:text-blue-800 text-2xl">
           &gt;
