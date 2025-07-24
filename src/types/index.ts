@@ -70,6 +70,31 @@ export interface ExternalIncome {
   updatedAt?: Date;
 }
 
+export interface ExternalIncome {
+  id?: string;
+  source: string;
+  amount: number;
+  date: Date;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface Expense {
+  id: string;
+  description: string;
+  amount: number;
+  date: Date;
+}
+
+export interface MonthlyExpenses {
+  month: string;
+  year: string;
+  expenses: Expense[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface Grade {
   value: string;
   label: string;
