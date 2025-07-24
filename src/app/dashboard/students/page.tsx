@@ -27,8 +27,10 @@ export default function StudentsPage() {
     grade: '',
     classSection: '',
     startDate: new Date().toISOString().split('T')[0],
-    students: [{ fullName: '', totalFee: 0 }]
+    commonTotalFee: 0, // New field for common total fee
+    students: [{ fullName: '' }] // totalFee removed from individual student
   });
+  const [suggestedBulkTotalFee, setSuggestedBulkTotalFee] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState(''); // حالة لتخزين النص المدخل في حقل البحث
   const [filterSchoolId, setFilterSchoolId] = useState('');
   const [filterGrade, setFilterGrade] = useState('');
@@ -122,19 +124,20 @@ export default function StudentsPage() {
   const handleBulkSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { schoolId, grade, classSection, startDate, students } = bulkFormData;
+    const { schoolId, grade, classSection, startDate, commonTotalFee, students } = bulkFormData;
 
-    if (!schoolId || !grade || !classSection || !startDate) {
-      alert('يرجى ملء جميع الحقول الرئيسية');
+    if (!schoolId || !grade || !classSection || !startDate || commonTotalFee <= 0) {
+      alert('يرجى ملء جميع الحقول الرئيسية والتأكد من أن القسط الكلي أكبر من صفر');
       return;
     }
 
     const batch = writeBatch(db);
     students.forEach(student => {
-      if (student.fullName && student.totalFee > 0) {
+      if (student.fullName) { // Only check for fullName, totalFee is now common
         const studentRef = doc(collection(db, 'students'));
         batch.set(studentRef, {
-          ...student,
+          fullName: student.fullName, // Only fullName from individual student
+          totalFee: commonTotalFee, // Use the common total fee
           schoolId,
           grade,
           classSection,
@@ -204,8 +207,10 @@ export default function StudentsPage() {
       grade: '',
       classSection: '',
       startDate: new Date().toISOString().split('T')[0],
-      students: [{ fullName: '', totalFee: 0 }]
+      commonTotalFee: 0,
+      students: [{ fullName: '' }]
     });
+    setSuggestedBulkTotalFee(0);
     setShowBulkAddForm(false);
   };
 
@@ -239,11 +244,25 @@ export default function StudentsPage() {
       ...prev,
       schoolId,
       grade: '',
-      classSection: ''
+      classSection: '',
+      commonTotalFee: 0 // Reset common total fee when school changes
     }));
+    setSuggestedBulkTotalFee(0); // Reset suggested fee
   };
 
-  const handleBulkStudentChange = (index: number, field: string, value: string | number) => {
+  // عند تغيير الصف في إضافة مجموعة طلاب، يتم تعبئة القسط الكلي المقترح
+  const handleBulkGradeChange = (gradeValue: string) => {
+    const found = fixedInstallmentPrices.find(p => p.className === gradeValue);
+    const suggestedPrice = found ? found.price : 0;
+    setBulkFormData(prev => ({
+      ...prev,
+      grade: gradeValue,
+      commonTotalFee: suggestedPrice // Set common total fee to suggested price
+    }));
+    setSuggestedBulkTotalFee(suggestedPrice); // Set suggested price for display
+  };
+
+  const handleBulkStudentChange = (index: number, field: string, value: string) => {
     const newStudents = [...bulkFormData.students];
     newStudents[index] = { ...newStudents[index], [field]: value };
     setBulkFormData(prev => ({ ...prev, students: newStudents }));
@@ -252,9 +271,9 @@ export default function StudentsPage() {
   const addBulkStudentRow = () => {
     setBulkFormData(prev => ({
       ...prev,
-      students: [...prev.students, { fullName: '', totalFee: 0 }]
+      students: [...prev.students, { fullName: '' }]
     }));
-  };
+  }; // Added missing closing brace
 
   const removeBulkStudentRow = (index: number) => {
     const newStudents = [...bulkFormData.students];
@@ -389,7 +408,7 @@ export default function StudentsPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">الصف الدراسي *</label>
                       <select
                         value={bulkFormData.grade}
-                        onChange={(e) => setBulkFormData(prev => ({ ...prev, grade: e.target.value }))}
+                        onChange={(e) => handleBulkGradeChange(e.target.value)} // Use new handler
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
@@ -413,6 +432,25 @@ export default function StudentsPage() {
                         ))}
                       </select>
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">القسط الكلي للعام الدراسي (د.ع) *</label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          value={bulkFormData.commonTotalFee}
+                          onChange={(e) => setBulkFormData(prev => ({ ...prev, commonTotalFee: Number(e.target.value) }))}
+                          required
+                          min="0"
+                          step="0.01"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {suggestedBulkTotalFee > 0 && (
+                          <div className="absolute left-0 top-full mt-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded shadow">
+                            السعر المقترح: {suggestedBulkTotalFee.toLocaleString('en-US')} د.ع
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </>
                 )}
                 <div>
@@ -433,7 +471,7 @@ export default function StudentsPage() {
                 <h3 className="text-lg font-medium text-gray-800 mb-2">قائمة الطلاب</h3>
                 <div className="space-y-2">
                   {bulkFormData.students.map((student, index) => (
-                    <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                    <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
                       <input
                         type="text"
                         placeholder="اسم الطالب الكامل"
@@ -441,13 +479,7 @@ export default function StudentsPage() {
                         onChange={(e) => handleBulkStudentChange(index, 'fullName', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                       />
-                      <input
-                        type="number"
-                        placeholder="القسط الكلي"
-                        value={student.totalFee}
-                        onChange={(e) => handleBulkStudentChange(index, 'totalFee', Number(e.target.value))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                      />
+                      {/* Removed individual totalFee input */}
                       <button
                         type="button"
                         onClick={() => removeBulkStudentRow(index)}
