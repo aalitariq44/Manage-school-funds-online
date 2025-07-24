@@ -30,6 +30,9 @@ export default function StudentsPage() {
     students: [{ fullName: '', totalFee: 0 }]
   });
   const [searchQuery, setSearchQuery] = useState(''); // حالة لتخزين النص المدخل في حقل البحث
+  const [filterSchoolId, setFilterSchoolId] = useState('');
+  const [filterGrade, setFilterGrade] = useState('');
+  const [filterSection, setFilterSection] = useState('');
 
   const classSections = ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح', 'ط', 'ي'];
 
@@ -240,7 +243,10 @@ export default function StudentsPage() {
   };
 
   const filteredStudents = students.filter(student =>
-    student.fullName.toLowerCase().includes(searchQuery.toLowerCase())
+    student.fullName.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    (filterSchoolId ? student.schoolId === filterSchoolId : true) &&
+    (filterGrade ? student.grade === filterGrade : true) &&
+    (filterSection ? student.classSection === filterSection : true)
   );
 
   if (loading) {
@@ -289,6 +295,42 @@ export default function StudentsPage() {
           </div>
         )}
       </div>
+
+      {/* Filter Controls */}
+      {schools.length > 0 && (
+        <div className="flex space-x-2 space-x-reverse items-center">
+          <select
+            value={filterSchoolId}
+            onChange={(e) => setFilterSchoolId(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">جميع المدارس</option>
+            {schools.map((school) => (
+              <option key={school.id} value={school.id}>{school.nameArabic}</option>
+            ))}
+          </select>
+          <select
+            value={filterGrade}
+            onChange={(e) => setFilterGrade(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">جميع الصفوف</option>
+            {GRADES.map((grade) => (
+              <option key={grade.value} value={grade.value}>{grade.label}</option>
+            ))}
+          </select>
+          <select
+            value={filterSection}
+            onChange={(e) => setFilterSection(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">جميع الشعب</option>
+            {classSections.map((section) => (
+              <option key={section} value={section}>{section}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Bulk Add Form */}
       {showBulkAddForm && (
