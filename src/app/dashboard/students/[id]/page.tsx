@@ -381,19 +381,21 @@ export default function StudentDetailsPage() {
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                       {formatDate(installment.createdAt)}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      <button
-                        onClick={() => handlePrintInstallment(installment)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
-                      >
-                        طباعة
-                      </button>
-                      <button
-                        onClick={() => handleDeleteInstallment(installment.id!)}
-                        className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
-                      >
-                        حذف
-                      </button>
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex flex-row-reverse gap-2">
+                        <button
+                          onClick={() => handlePrintInstallment(installment)}
+                          className="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600"
+                        >
+                          طباعة
+                        </button>
+                        <button
+                          onClick={() => handleDeleteInstallment(installment.id!)}
+                          className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+                        >
+                          حذف
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
