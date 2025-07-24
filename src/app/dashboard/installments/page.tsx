@@ -4,6 +4,12 @@ import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/fires
 import { db } from '../../../lib/firebase';
 import { Installment, Student, School } from '../../../types';
 import { formatCurrency, formatDate } from '../../../utils/formatters';
+import { GRADES } from '../../../utils/constants';
+  // دالة لجلب اسم الصف بالعربي
+  const getGradeLabel = (gradeValue: string) => {
+    const grade = GRADES.find(g => g.value === gradeValue);
+    return grade?.label || gradeValue;
+  };
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import Link from 'next/link';
 
@@ -198,7 +204,7 @@ export default function InstallmentsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {installment.student ? 
-                        `${installment.student.grade} / ${installment.student.classSection}` : 
+                        `${getGradeLabel(installment.student.grade)} / ${installment.student.classSection}` : 
                         'غير محدد'
                       }
                     </td>
