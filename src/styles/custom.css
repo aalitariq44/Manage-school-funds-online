@@ -1,0 +1,146 @@
+/* إضافات CSS للصفحات الجديدة */
+.installment-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.installment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.print-btn {
+  background: linear-gradient(45deg, #3b82f6, #1d4ed8);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.print-btn:hover {
+  background: linear-gradient(45deg, #1d4ed8, #1e40af);
+}
+
+.delete-btn {
+  background: linear-gradient(45deg, #ef4444, #dc2626);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(45deg, #dc2626, #b91c1c);
+}
+
+.student-stats {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.arabic-table {
+  direction: rtl;
+  text-align: right;
+}
+
+.arabic-table th,
+.arabic-table td {
+  text-align: right;
+}
+
+/* إضافة أنيميشن للأزرار */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* تحسين نمط الجدول */
+.table-row-hover:hover {
+  background-color: #f8fafc;
+  transform: scale(1.001);
+  transition: all 0.2s ease-in-out;
+}
+
+/* نمط للإيصالات */
+.receipt-number {
+  background: linear-gradient(45deg, #06b6d4, #0891b2);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+/* تحسين شكل المدخلات */
+.form-input {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* أنماط للإحصائيات */
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  border-left: 4px solid;
+  transition: transform 0.2s ease-in-out;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-card.blue {
+  border-left-color: #3b82f6;
+}
+
+.stat-card.green {
+  border-left-color: #10b981;
+}
+
+.stat-card.orange {
+  border-left-color: #f59e0b;
+}
+
+.stat-card.purple {
+  border-left-color: #8b5cf6;
+}
+
+/* إضافة تأثيرات للطباعة */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    direction: rtl;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .print-content {
+    margin: 0;
+    padding: 20px;
+  }
+}

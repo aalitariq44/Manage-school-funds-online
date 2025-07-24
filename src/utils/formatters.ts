@@ -1,10 +1,6 @@
 // utils/formatters.ts
 export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('ar-SA', {
-    style: 'currency',
-    currency: 'SAR',
-    minimumFractionDigits: 2
-  }).format(amount);
+  return `${amount.toLocaleString('ar-IQ')} د.ع`;
 };
 
 export const formatDate = (date: Date): string => {

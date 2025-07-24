@@ -656,6 +656,12 @@ export default function StudentsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2 space-x-reverse">
+                          <Link
+                            href={`/dashboard/students/${student.id}`}
+                            className="text-green-600 hover:text-green-900"
+                          >
+                            التفاصيل
+                          </Link>
                           <button
                             onClick={() => handleEdit(student)}
                             className="text-blue-600 hover:text-blue-900"

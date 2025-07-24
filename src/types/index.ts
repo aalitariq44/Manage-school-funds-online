@@ -28,6 +28,16 @@ export interface Student {
   updatedAt?: Date;
 }
 
+export interface Installment {
+  id?: string;
+  installmentNumber: number; // رقم مميز بالتسلسل
+  studentId: string;
+  studentName: string;
+  amount: number;
+  createdAt: Date;
+  notes?: string;
+}
+
 export interface Grade {
   value: string;
   label: string;
