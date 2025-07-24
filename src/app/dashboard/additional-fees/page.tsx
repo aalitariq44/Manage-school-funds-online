@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { AdditionalFee, School, Student, AdditionalFeeType } from '../../../types';
@@ -259,6 +260,9 @@ export default function AdditionalFeesPage() {
                   <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                     تاريخ الإنشاء
                   </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    الإجراءات
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -295,6 +299,13 @@ export default function AdditionalFeesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(fee.createdAt)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link href={`/dashboard/students/${fee.studentId}`}>
+                        <button className="text-blue-600 hover:text-blue-900">
+                          عرض التفاصيل
+                        </button>
+                      </Link>
                     </td>
                   </tr>
                 ))}
