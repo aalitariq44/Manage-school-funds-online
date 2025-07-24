@@ -126,6 +126,14 @@ export default function ExternalIncomesPage() {
         </button>
       </div>
 
+      {/* مجموع الواردات الخارجية */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between max-w-md mx-auto">
+        <span className="text-lg font-semibold text-blue-800">مجموع الواردات الخارجية:</span>
+        <span className="text-xl font-bold text-blue-900">
+          {incomes.reduce((sum, income) => sum + (Number(income.amount) || 0), 0).toLocaleString('en-US')} د.ع
+        </span>
+      </div>
+
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
