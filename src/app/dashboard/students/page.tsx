@@ -5,6 +5,7 @@ import { db } from '../../../lib/firebase';
 import { School, Student } from '../../../types';
 import { GRADES, getGradesForSchoolTypes } from '../../../utils/constants';
 import Link from 'next/link';
+import { formatDate } from '@/utils/formatters';
 
 export default function StudentsPage() {
   const [students, setStudents] = useState<Student[]>([]);
@@ -723,7 +724,7 @@ export default function StudentsPage() {
                         {(student.totalFee ?? 0).toLocaleString('en-US')} د.ع
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {student.startDate.toLocaleDateString('ar-SA')}
+                        {formatDate(student.startDate)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div className="flex space-x-2 space-x-reverse">
