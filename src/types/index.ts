@@ -60,6 +60,16 @@ export interface AdditionalFee {
   notes?: string;
 }
 
+export interface ExternalIncome {
+  id?: string;
+  source: string;
+  amount: number;
+  date: Date;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface Grade {
   value: string;
   label: string;
